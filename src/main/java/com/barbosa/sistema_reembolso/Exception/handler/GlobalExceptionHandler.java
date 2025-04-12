@@ -1,8 +1,6 @@
 package com.barbosa.sistema_reembolso.Exception.handler;
 
-import com.barbosa.sistema_reembolso.Exception.business.EmailJaCadastradoException;
-import com.barbosa.sistema_reembolso.Exception.business.EmailNaoEncontradoException;
-import com.barbosa.sistema_reembolso.Exception.business.UsuarioNaoEncontradoException;
+import com.barbosa.sistema_reembolso.Exception.business.*;
 import com.barbosa.sistema_reembolso.Exception.model.ApiError;
 import com.barbosa.sistema_reembolso.Exception.model.CampoErroDTO;
 import org.springframework.http.HttpStatus;
@@ -76,6 +74,37 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+    }
+
+    @ExceptionHandler(ValorReembolsoInvalidoException.class)
+    public ResponseEntity<ApiError> handlerValorReembolsoInvalidoException(ValorReembolsoInvalidoException ex) {
+        ApiError erro = ApiError.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(DataDespesaInvalidaException.class)
+    public ResponseEntity<ApiError> handlerDataDespesaInvalida(DataDespesaInvalidaException ex) {
+        ApiError erro = ApiError.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(ValorDespesaInvalidoException.class)
+    public ResponseEntity<ApiError> handlerDataDespesaInvalida(ValorDespesaInvalidoException ex){
+        ApiError erro = ApiError.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
 }

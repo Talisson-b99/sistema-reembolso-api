@@ -1,7 +1,7 @@
 package com.barbosa.sistema_reembolso.dto;
 
 import com.barbosa.sistema_reembolso.domain.model.Usuario;
-import com.barbosa.sistema_reembolso.domain.model.enums.Role;
+import com.barbosa.sistema_reembolso.domain.enums.Role;
 
 import java.util.UUID;
 
