@@ -1,9 +1,8 @@
 package com.barbosa.sistema_reembolso.service.impl;
 
-import com.barbosa.sistema_reembolso.Exception.business.DataDespesaInvalidaException;
-import com.barbosa.sistema_reembolso.Exception.business.UsuarioNaoEncontradoException;
-import com.barbosa.sistema_reembolso.Exception.business.ValorDespesaInvalidoException;
-import com.barbosa.sistema_reembolso.Exception.business.ValorReembolsoInvalidoException;
+import com.barbosa.sistema_reembolso.Exception.business.*;
+import com.barbosa.sistema_reembolso.domain.enums.Role;
+import com.barbosa.sistema_reembolso.domain.enums.StatusReembolso;
 import com.barbosa.sistema_reembolso.domain.enums.TipoDespesa;
 import com.barbosa.sistema_reembolso.domain.model.Reembolso;
 import com.barbosa.sistema_reembolso.domain.model.Usuario;
@@ -17,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ReembolsoServiceImpl implements ReembolsoService {
@@ -48,6 +49,28 @@ public class ReembolsoServiceImpl implements ReembolsoService {
         Reembolso reembolsoSalvo = reembolsoRepository.save(reembolso);
 
         return ReembolsoResponseDTO.fromEntity(reembolso, usuario.getNome());
+    }
+
+    @Override
+    public List<ReembolsoResponseDTO> buscarTodosReembolsos() {
+        var reembolsos = reembolsoRepository.findAll();
+        return reembolsos.stream()
+                .map(reembolso -> ReembolsoResponseDTO.fromEntity(reembolso, reembolso.getUsuario().getNome())).toList();
+    }
+
+    @Override
+    public ReembolsoResponseDTO buscarReembolsoPorId(UUID reembolsoId) {
+        Reembolso reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
+
+        return ReembolsoResponseDTO.fromEntity(reembolso, reembolso.getUsuario().getNome());
+    }
+
+    @Override
+    public List<ReembolsoResponseDTO> buscarReembolsoPorStatus(StatusReembolso status) {
+        var reembolsos = reembolsoRepository.findAllByStatus(status);
+
+        return reembolsos.stream()
+                .map(reemboso -> ReembolsoResponseDTO.fromEntity(reemboso, reemboso.getUsuario().getNome())).toList();
     }
 
     private void validarLimiteDespesa(ReembolsoRequestDTO dto) {

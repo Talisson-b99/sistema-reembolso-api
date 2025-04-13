@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handlerUsuarioNaoEncontrado(UsuarioNaoEncontradoException ex) {
         ApiError error = ApiError.builder()
                 .mensagem(ex.getMessage())
-                .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -105,6 +105,16 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(ReembolsoNaoEncontradoException.class)
+    public ResponseEntity<ApiError> handlerReembolsoNaoEncontrado(ReembolsoNaoEncontradoException ex) {
+        ApiError erro = ApiError.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
 }
