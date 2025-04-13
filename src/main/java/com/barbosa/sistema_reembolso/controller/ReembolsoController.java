@@ -1,11 +1,12 @@
 package com.barbosa.sistema_reembolso.controller;
 
 import com.barbosa.sistema_reembolso.domain.enums.StatusReembolso;
-import com.barbosa.sistema_reembolso.domain.model.Reembolso;
+import com.barbosa.sistema_reembolso.dto.JustificativaRecusaDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoRequestDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoResponseDTO;
 import com.barbosa.sistema_reembolso.dto.UpdateReembolsoDTO;
 import com.barbosa.sistema_reembolso.service.ReembolsoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,18 @@ public class ReembolsoController {
         reembolsoService.atualizarReembolso(reembolsoId, dto);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{reembolsoId}/aprovar")
+    public ResponseEntity<ReembolsoResponseDTO> aprovarReembolso(@PathVariable UUID reembolsoId){
+        ;
+        return  ResponseEntity.ok().body(reembolsoService.aprovarReembolso(reembolsoId));
+    }
+
+    @PatchMapping("/{reembolsoId}/recusar")
+    public ResponseEntity<ReembolsoResponseDTO> recusarReembolso(@PathVariable UUID reembolsoId, @Valid @RequestBody JustificativaRecusaDTO justificativaRecusaDTO){
+
+        return ResponseEntity.ok(reembolsoService.recusarReembolso(reembolsoId, justificativaRecusaDTO));
     }
 
     @DeleteMapping("/{reembolsoId}")

@@ -16,6 +16,7 @@ public record ReembolsoResponseDTO(UUID id,
                                    String comprovanteUrl,
                                    StatusReembolso status,
                                    TipoDespesa tipoDespesa,
+                                   String justificativaRecusa,
                                    String nome,
                                    UUID usuarioId){
 
@@ -29,6 +30,7 @@ public record ReembolsoResponseDTO(UUID id,
                 reembolso.getComprovanteUrl(),
                 reembolso.getStatus(),
                 reembolso.getTipoDespesa(),
+                reembolso.getJustificativaRecusa(),
                 nome,
                 reembolso.getUsuario().getId()
         );
