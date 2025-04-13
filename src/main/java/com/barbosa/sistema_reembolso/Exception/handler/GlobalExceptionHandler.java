@@ -117,4 +117,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
+    @ExceptionHandler(StatusReembolsoNaoAtualizavelException.class)
+    public ResponseEntity<ApiError> handlerStatusReembolsoNaoAtualizavel(StatusReembolsoNaoAtualizavelException ex){
+        ApiError erro = ApiError.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
 }
