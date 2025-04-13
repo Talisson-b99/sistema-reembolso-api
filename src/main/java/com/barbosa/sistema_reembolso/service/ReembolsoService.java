@@ -1,6 +1,7 @@
 package com.barbosa.sistema_reembolso.service;
 
 import com.barbosa.sistema_reembolso.domain.enums.StatusReembolso;
+import com.barbosa.sistema_reembolso.dto.JustificativaRecusaDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoRequestDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoResponseDTO;
 import com.barbosa.sistema_reembolso.dto.UpdateReembolsoDTO;
@@ -16,4 +17,6 @@ public interface ReembolsoService {
     List<ReembolsoResponseDTO> buscarReembolsoPorStatus(StatusReembolso role);
     void atualizarReembolso(UUID reembolsoId, UpdateReembolsoDTO dto);
     void deletarReembolso(UUID reembolsoId);
+    ReembolsoResponseDTO aprovarReembolso(UUID reembolsoId);
+    ReembolsoResponseDTO recusarReembolso(UUID reembolsoId, JustificativaRecusaDTO justificativaDespesa);
 }

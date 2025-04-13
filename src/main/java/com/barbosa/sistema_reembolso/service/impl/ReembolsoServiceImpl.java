@@ -5,6 +5,7 @@ import com.barbosa.sistema_reembolso.domain.enums.StatusReembolso;
 import com.barbosa.sistema_reembolso.domain.enums.TipoDespesa;
 import com.barbosa.sistema_reembolso.domain.model.Reembolso;
 import com.barbosa.sistema_reembolso.domain.model.Usuario;
+import com.barbosa.sistema_reembolso.dto.JustificativaRecusaDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoRequestDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoResponseDTO;
 import com.barbosa.sistema_reembolso.dto.UpdateReembolsoDTO;
@@ -71,9 +72,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     public void atualizarReembolso(UUID reembolsoId , UpdateReembolsoDTO dto) {
         Reembolso reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
 
-        if(!reembolso.getStatus().equals(StatusReembolso.PENDENTE)) {
-            throw new StatusReembolsoNaoAtualizavelException(reembolsoId);
-        }
+        verificarStatusPendente(reembolsoId, reembolso);
 
         if(dto.valor() != null) {
             validarValorMaiorZero(dto.valor());
@@ -111,10 +110,36 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     public void deletarReembolso(UUID reembolsoId) {
         var reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
 
-        if(!reembolso.getStatus().equals(StatusReembolso.PENDENTE)){
-          throw new StatusReembolsoNaoAtualizavelException(reembolsoId);
-        }
+        verificarStatusPendente(reembolsoId, reembolso);
         reembolsoRepository.deleteById(reembolsoId);
+    }
+
+
+    @Override
+    public ReembolsoResponseDTO aprovarReembolso(UUID reembolsoId) {
+        //TODO VERIFICAR SE É UM GESTOR
+        var reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
+
+        verificarStatusPendente(reembolsoId, reembolso);
+
+        reembolso.setStatus(StatusReembolso.APROVADO);
+        var reembolsoSalvo = reembolsoRepository.save(reembolso);
+
+        return  ReembolsoResponseDTO.fromEntity(reembolsoSalvo, reembolso.getUsuario().getNome());
+    }
+
+    @Override
+    public ReembolsoResponseDTO recusarReembolso(UUID reembolsoId, JustificativaRecusaDTO justificativaRecusaDTO) {
+        var reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() ->  new ReembolsoNaoEncontradoException(reembolsoId));
+
+        verificarStatusPendente(reembolsoId, reembolso);
+
+        reembolso.setJustificativaRecusa(justificativaRecusaDTO.justificativaDespesa());
+        reembolso.setStatus(StatusReembolso.RECUSADO);
+
+        var reembolsoSalvo = reembolsoRepository.save(reembolso);
+
+        return  ReembolsoResponseDTO.fromEntity(reembolsoSalvo, reembolso.getUsuario().getNome());
     }
 
     private void validarLimiteDespesa(TipoDespesa tipoDespesa, BigDecimal valor) {
@@ -142,6 +167,12 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     private static void validarData(LocalDate data) {
         if (data.isBefore(LocalDate.now().minusMonths(1)) || data.isAfter(LocalDate.now())) {
             throw new DataDespesaInvalidaException();
+        }
+    }
+
+    private static void verificarStatusPendente(UUID reembolsoId, Reembolso reembolso) {
+        if(!reembolso.getStatus().equals(StatusReembolso.PENDENTE)){
+            throw new StatusReembolsoNaoAtualizavelException(reembolsoId);
         }
     }
 }
