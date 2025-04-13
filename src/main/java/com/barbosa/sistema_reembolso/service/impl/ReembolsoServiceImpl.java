@@ -107,6 +107,16 @@ public class ReembolsoServiceImpl implements ReembolsoService {
         reembolsoRepository.save(reembolso);
     }
 
+    @Override
+    public void deletarReembolso(UUID reembolsoId) {
+        var reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
+
+        if(!reembolso.getStatus().equals(StatusReembolso.PENDENTE)){
+          throw new StatusReembolsoNaoAtualizavelException(reembolsoId);
+        }
+        reembolsoRepository.deleteById(reembolsoId);
+    }
+
     private void validarLimiteDespesa(TipoDespesa tipoDespesa, BigDecimal valor) {
         Map<TipoDespesa, Double> limites = Map.of(
                 TipoDespesa.REFEICAO, 100.00,
