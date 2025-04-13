@@ -5,7 +5,7 @@ import java.util.UUID;
 public class StatusReembolsoNaoAtualizavelException extends RuntimeException {
     public StatusReembolsoNaoAtualizavelException(UUID id) {
         super(
-                "O status do reembolso com ID " + id + " não pode ser alterada. Apenas reembolsos com status PENDENTE podem ser modificados"
+                "O status do reembolso com ID " + id + " não pode ser alterada ou deletada. Apenas reembolsos com status PENDENTE podem ser modificados ou deletadas"
         );
     }
 }

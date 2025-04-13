@@ -50,4 +50,11 @@ public class ReembolsoController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{reembolsoId}")
+    public ResponseEntity<Void> deletarReembolso(@PathVariable UUID reembolsoId) {
+        reembolsoService.deletarReembolso(reembolsoId);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

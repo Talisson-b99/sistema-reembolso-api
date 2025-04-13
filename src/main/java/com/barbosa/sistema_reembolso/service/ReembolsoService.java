@@ -15,4 +15,5 @@ public interface ReembolsoService {
     ReembolsoResponseDTO buscarReembolsoPorId(UUID reembolsoId);
     List<ReembolsoResponseDTO> buscarReembolsoPorStatus(StatusReembolso role);
     void atualizarReembolso(UUID reembolsoId, UpdateReembolsoDTO dto);
+    void deletarReembolso(UUID reembolsoId);
 }
