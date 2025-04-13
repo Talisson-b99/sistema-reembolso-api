@@ -4,6 +4,7 @@ import com.barbosa.sistema_reembolso.domain.enums.StatusReembolso;
 import com.barbosa.sistema_reembolso.domain.model.Reembolso;
 import com.barbosa.sistema_reembolso.dto.ReembolsoRequestDTO;
 import com.barbosa.sistema_reembolso.dto.ReembolsoResponseDTO;
+import com.barbosa.sistema_reembolso.dto.UpdateReembolsoDTO;
 import com.barbosa.sistema_reembolso.service.ReembolsoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,13 @@ public class ReembolsoController {
     @GetMapping("/search")
     public ResponseEntity<List<ReembolsoResponseDTO>> buscarReembolsoPorStatus(@RequestParam("status")StatusReembolso status){
         return ResponseEntity.ok(reembolsoService.buscarReembolsoPorStatus(status));
+    }
+
+    @PutMapping("/{reembolsoId}")
+    public ResponseEntity<ReembolsoResponseDTO> atualizarReembolso(@PathVariable UUID reembolsoId, @RequestBody UpdateReembolsoDTO dto){
+        reembolsoService.atualizarReembolso(reembolsoId, dto);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
