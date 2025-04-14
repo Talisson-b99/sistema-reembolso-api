@@ -14,8 +14,7 @@ public record ReembolsoRequestDTO(TipoDespesa tipoDespesa,
                                   LocalDate dataDespesa,
                                   String descricao,
                                   String comprovanteUrl,
-                                  String justificativa,
-                                  UUID usuarioId){
+                                  String justificativa){
 
     public Reembolso toEntity(Usuario usuario) {
         Reembolso reembolso = new Reembolso();

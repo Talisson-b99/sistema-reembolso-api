@@ -5,9 +5,11 @@ import com.barbosa.sistema_reembolso.Exception.model.ApiError;
 import com.barbosa.sistema_reembolso.Exception.model.CampoErroDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -126,6 +128,17 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiError> handlerNaoAutorizado(AuthorizationDeniedException ex) {
+        ApiError erro = ApiError.builder()
+                .mensagem(ex.getMessage())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
     }
 
 }

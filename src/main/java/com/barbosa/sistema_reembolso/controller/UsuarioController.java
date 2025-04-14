@@ -1,6 +1,5 @@
 package com.barbosa.sistema_reembolso.controller;
 
-import com.barbosa.sistema_reembolso.Exception.business.EmailJaCadastradoException;
 import com.barbosa.sistema_reembolso.dto.UsuarioRequestDTO;
 import com.barbosa.sistema_reembolso.dto.UsuarioResponseDTO;
 import com.barbosa.sistema_reembolso.dto.UsuarioUpdateDTO;
