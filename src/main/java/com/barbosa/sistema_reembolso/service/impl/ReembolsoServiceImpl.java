@@ -11,8 +11,12 @@ import com.barbosa.sistema_reembolso.dto.ReembolsoResponseDTO;
 import com.barbosa.sistema_reembolso.dto.UpdateReembolsoDTO;
 import com.barbosa.sistema_reembolso.repository.ReembolsoRepository;
 import com.barbosa.sistema_reembolso.repository.UsuarioRepository;
+import com.barbosa.sistema_reembolso.security.UsuarioAutenticado;
 import com.barbosa.sistema_reembolso.service.ReembolsoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,9 +35,13 @@ public class ReembolsoServiceImpl implements ReembolsoService {
 
     @Override
     public ReembolsoResponseDTO cadastrarReembolso(ReembolsoRequestDTO dto) {
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(dto.usuarioId()));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UsuarioAutenticado usuarioAutenticado = (UsuarioAutenticado) auth.getPrincipal();
 
+        Usuario usuario = usuarioRepository.findById(usuarioAutenticado.getId())
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioAutenticado.getId()));
+
+        usuario.setId(usuarioAutenticado.getId());
         Reembolso reembolso = dto.toEntity(usuario);
 
         validarData(dto.dataDespesa());
@@ -47,6 +55,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
 
 
     @Override
+    @PreAuthorize("hasRole('GESTOR')")
     public List<ReembolsoResponseDTO> buscarTodosReembolsos() {
         var reembolsos = reembolsoRepository.findAll();
         return reembolsos.stream()
@@ -54,6 +63,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     }
 
     @Override
+    @PreAuthorize("@gerenciamenteAcesso.podeVerReembolso(#reembolsoId)")
     public ReembolsoResponseDTO buscarReembolsoPorId(UUID reembolsoId) {
         Reembolso reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
 
@@ -61,6 +71,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     }
 
     @Override
+    @PreAuthorize("hasRole('GESTOR')")
     public List<ReembolsoResponseDTO> buscarReembolsoPorStatus(StatusReembolso status) {
         var reembolsos = reembolsoRepository.findAllByStatus(status);
 
@@ -69,6 +80,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     }
 
     @Override
+    @PreAuthorize("@gerenciamenteAcesso.podeVerReembolso(#reembolsoId)")
     public void atualizarReembolso(UUID reembolsoId , UpdateReembolsoDTO dto) {
         Reembolso reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
 
@@ -116,6 +128,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
 
 
     @Override
+    @PreAuthorize("hasRole('GESTOR')")
     public ReembolsoResponseDTO aprovarReembolso(UUID reembolsoId) {
         //TODO VERIFICAR SE É UM GESTOR
         var reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() -> new ReembolsoNaoEncontradoException(reembolsoId));
@@ -129,6 +142,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     }
 
     @Override
+    @PreAuthorize("hasRole('GESTOR')")
     public ReembolsoResponseDTO recusarReembolso(UUID reembolsoId, JustificativaRecusaDTO justificativaRecusaDTO) {
         var reembolso = reembolsoRepository.findById(reembolsoId).orElseThrow(() ->  new ReembolsoNaoEncontradoException(reembolsoId));
 
